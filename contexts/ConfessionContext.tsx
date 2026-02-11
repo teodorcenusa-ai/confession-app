@@ -13,15 +13,20 @@ export const [ConfessionContext, useConfession] = createContextHook(() => {
   const addItem = useCallback((item: SelectedItem) => {
     setSelectedItems((prev) => {
       const exists = prev.some((i) => i.id === item.id);
-      if (exists) {
-        return prev;
-      }
+      if (exists) return prev;
       return [...prev, item];
     });
   }, []);
 
   const removeItem = useCallback((id: string) => {
     setSelectedItems((prev) => prev.filter((item) => item.id !== id));
+  }, []);
+
+  // ADAUGĂ ACEASTĂ FUNCȚIE (LIPSEA!)
+  const updateItem = useCallback((id: string, newText: string) => {
+    setSelectedItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, text: newText } : item))
+    );
   }, []);
 
   const clearItems = useCallback(() => {
@@ -36,8 +41,9 @@ export const [ConfessionContext, useConfession] = createContextHook(() => {
       setCustomText,
       addItem,
       removeItem,
+      updateItem, // NU UITA SĂ O ADAUGI ȘI AICI
       clearItems,
     }),
-    [selectedItems, customText, addItem, removeItem, clearItems]
+    [selectedItems, customText, addItem, removeItem, updateItem, clearItems]
   );
 });

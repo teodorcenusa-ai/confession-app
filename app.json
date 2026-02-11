@@ -2,7 +2,7 @@
   "expo": {
     "name": "Taina Spovedaniei",
     "slug": "confession-final-build",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "light",
@@ -24,7 +24,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "ro.teodor.taina.spovedanie",
-      "versionCode": 2
+      "versionCode": 3
     },
     "extra": {
       "eas": {
