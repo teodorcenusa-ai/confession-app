@@ -1,16 +1,35 @@
 {
   "expo": {
-    "name": "Spovedanie",
+    "name": "Taina Spovedaniei",
     "slug": "confession-final-build",
-    "version": "1.1.0",
+    "version": "1.1.1",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "ro.teodor.taina.spovedanie"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "ro.teodor.taina.spovedanie",
+      "versionCode": 2
+    },
     "extra": {
       "eas": {
         "projectId": "b603e78f-a332-4110-a9fa-19632a888bee"
       }
-    },
-    "android": {
-      "package": "ro.teodor.taina.spovedanie",
-      "versionCode": 1
     },
     "owner": "teodorash"
   }
