@@ -2,52 +2,15 @@
   "expo": {
     "name": "Spovedanie",
     "slug": "confession-final-build",
-    "version": "1.0.3",
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "rork-app",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
-    "splash": {
-      "image": "./assets/images/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "app.rork.spovedanie.app"
+    "version": "1.0.4",
+    "extra": {
+      "eas": {
+        "projectId": "b603e78f-a332-4110-a9fa-19632a888bee"
+      }
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
       "package": "app.rork.spovedanie.app",
-      "permissions": [
-        "android.permission.VIBRATE"
-      ],
-      "versionCode": 5
-    },
-    "web": {
-      "favicon": "./assets/images/favicon.png"
-    },
-    "plugins": [
-      [
-        "expo-router",
-        {
-          "origin": "https://rork.com/"
-        }
-      ],
-      "expo-font",
-      "expo-web-browser"
-    ],
-    "experiments": {
-      "typedRoutes": true
-    },
-    "extra": {
-      "router": {
-        "origin": "https://rork.com/"
-            }
+      "versionCode": 6
     },
     "owner": "teodorash"
   }
