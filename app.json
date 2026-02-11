@@ -2,15 +2,15 @@
   "expo": {
     "name": "Spovedanie",
     "slug": "confession-final-build",
-    "version": "1.0.4",
+    "version": "1.1.0",
     "extra": {
       "eas": {
         "projectId": "b603e78f-a332-4110-a9fa-19632a888bee"
       }
     },
     "android": {
-      "package": "app.rork.spovedanie.app",
-      "versionCode": 6
+      "package": "ro.teodor.taina.spovedanie",
+      "versionCode": 1
     },
     "owner": "teodorash"
   }
