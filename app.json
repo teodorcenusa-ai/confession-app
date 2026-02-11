@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Taina Spovedaniei",
-    "slug": "spovedanie-app-nou",
+    "name": "Spovedanie",
+    "slug": "confession-final-build",
     "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -47,10 +47,7 @@
     "extra": {
       "router": {
         "origin": "https://rork.com/"
-      },
-      "eas": {
-        "projectId": "c5b9e3dc-d9f8-4058-8a89-04707dc98935"
-      }
+            }
     },
     "owner": "teodorash"
   }
