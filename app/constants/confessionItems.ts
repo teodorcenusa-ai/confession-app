@@ -83,26 +83,3 @@ export const CONFESSION_GUIDE: ConfessionCategory[] = [
     ],
   },
 ];
-
-export const CONFESSION_GUIDE_KIDS: ConfessionCategory[] = [
-  {
-    id: "copii_ghid",
-    title: "ÎNDREPTAR PENTRU COPII",
-    items: [
-      { id: "k1", text: "Nu m-am rugat lui Dumnezeu dimineața, seara sau înainte de masă." },
-      { id: "k2", text: "M-am rușinat să-mi fac semnul sfintei cruci." },
-      { id: "k3", text: "Nu am ascultat de părinți și i-am supărat prin purtarea mea." },
-      { id: "k4", text: "Am fost obraznic la școală sau acasă." },
-      { id: "k5", text: "M-am certat cu alți copii sau cu frații mei." },
-      { id: "k6", text: "Am mințit părinții, profesorii sau prietenii." },
-      { id: "k7", text: "Am luat lucruri care nu erau ale mele fără să cer voie." },
-      { id: "k8", text: "M-am mândrit că sunt mai bun decât alții sau am râs de alți copii." },
-      { id: "k9", text: "Am vorbit urât sau am folosit cuvinte necuviincioase." },
-      { id: "k10", text: "M-am lenevit la învățătură sau la treburile pe care le aveam de făcut." },
-      { id: "k11", text: "Am fost pizmaș (invidios) pe jucăriile sau notele altora." },
-      { id: "k12", text: "Am chinuit animalele sau am distrus plantele cu rea voință." },
-      { id: "k13", text: "Nu am vrut să-i ajut pe cei care aveau nevoie de mine." },
-      { id: "k14", text: "Am fost nemulțumit și am cârtit când am primit mâncare sau haine care nu mi-au plăcut." }
-    ]
-  }
-];

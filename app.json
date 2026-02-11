@@ -2,12 +2,12 @@
   "expo": {
     "name": "Taina Spovedaniei",
     "slug": "spovedanie-app-nou",
-    "version": "1.0.0",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "rork-app",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
@@ -25,7 +25,8 @@
       "package": "app.rork.spovedanie.app",
       "permissions": [
         "android.permission.VIBRATE"
-      ]
+      ],
+      "versionCode": 5
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
@@ -48,8 +49,9 @@
         "origin": "https://rork.com/"
       },
       "eas": {
-        "projectId": "ed1b15a7-8cd1-4167-955e-ce759c7ffd09"
+        "projectId": "c5b9e3dc-d9f8-4058-8a89-04707dc98935"
       }
-    }
+    },
+    "owner": "teodorash"
   }
 }
