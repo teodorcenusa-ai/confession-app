@@ -1,19 +1,33 @@
-import createContextHook from '@nkzw/create-context-hook';
-import { useCallback, useMemo, useState } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 
 export interface SelectedItem {
   id: string;
   text: string;
 }
 
-export const [ConfessionContext, useConfession] = createContextHook(() => {
+interface ConfessionContextType {
+  selectedItems: SelectedItem[];
+  customText: string;
+  fontSize: number; // NOU
+  setCustomText: (text: string) => void;
+  addItem: (item: SelectedItem) => void;
+  removeItem: (id: string) => void;
+  updateItem: (id: string, newText: string) => void;
+  clearItems: () => void;
+  increaseFontSize: () => void; // NOU
+  decreaseFontSize: () => void; // NOU
+}
+
+const ConfessionContext = createContext<ConfessionContextType | undefined>(undefined);
+
+export function ConfessionProvider({ children }: { children: React.ReactNode }) {
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
   const [customText, setCustomText] = useState<string>('');
+  const [fontSize, setFontSize] = useState<number>(18); // NOU: mărimea de start
 
   const addItem = useCallback((item: SelectedItem) => {
     setSelectedItems((prev) => {
-      const exists = prev.some((i) => i.id === item.id);
-      if (exists) return prev;
+      if (prev.some((i) => i.id === item.id)) return prev;
       return [...prev, item];
     });
   }, []);
@@ -22,7 +36,6 @@ export const [ConfessionContext, useConfession] = createContextHook(() => {
     setSelectedItems((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
-  // ADAUGĂ ACEASTĂ FUNCȚIE (LIPSEA!)
   const updateItem = useCallback((id: string, newText: string) => {
     setSelectedItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, text: newText } : item))
@@ -34,16 +47,35 @@ export const [ConfessionContext, useConfession] = createContextHook(() => {
     setCustomText('');
   }, []);
 
-  return useMemo(
-    () => ({
-      selectedItems,
-      customText,
-      setCustomText,
-      addItem,
-      removeItem,
-      updateItem, // NU UITA SĂ O ADAUGI ȘI AICI
-      clearItems,
-    }),
-    [selectedItems, customText, addItem, removeItem, updateItem, clearItems]
-  );
-});
+  // FUNCȚII NOI PENTRU FONT
+  const increaseFontSize = useCallback(() => {
+    setFontSize((prev) => (prev < 34 ? prev + 2 : prev));
+  }, []);
+
+  const decreaseFontSize = useCallback(() => {
+    setFontSize((prev) => (prev > 14 ? prev - 2 : prev));
+  }, []);
+
+  const value = useMemo(() => ({
+    selectedItems,
+    customText,
+    fontSize, // ADĂUGAT ÎN VALOARE
+    setCustomText,
+    addItem,
+    removeItem,
+    updateItem,
+    clearItems,
+    increaseFontSize, // ADĂUGAT ÎN VALOARE
+    decreaseFontSize, // ADĂUGAT ÎN VALOARE
+  }), [selectedItems, customText, fontSize, addItem, removeItem, updateItem, clearItems, increaseFontSize, decreaseFontSize]);
+
+  return <ConfessionContext.Provider value={value}>{children}</ConfessionContext.Provider>;
+}
+
+export function useConfession() {
+  const context = useContext(ConfessionContext);
+  if (context === undefined) {
+    throw new Error('useConfession must be used within a ConfessionProvider');
+  }
+  return context;
+}

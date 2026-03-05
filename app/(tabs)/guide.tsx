@@ -1,89 +1,149 @@
-import { CONFESSION_GUIDE, CONFESSION_GUIDE_KIDS } from '../../constants/confessionItems';
-import { useConfession } from '../../contexts/ConfessionContext';
-import { Plus } from 'lucide-react-native';
-import React, { useState } from "react";
-import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState, useMemo, useEffect } from "react";
+import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native';
+import { Plus, Search, X, MoreVertical, Menu } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from 'expo-router';
+import { useIsFocused } from '@react-navigation/native'; // IMPORTAT PENTRU SINCRONIZARE
+import { CONFESSION_GUIDE, CONFESSION_GUIDE_KIDS } from '../../constants/confessionItems';
+import { useConfession } from '../../contexts/ConfessionContext';
 
 export default function GuideScreen() {
-  const { addItem, selectedItems } = useConfession();
-  const insets = useSafeAreaInsets();
+  const { 
+    addItem, 
+    selectedItems, 
+    fontSize, 
+    increaseFontSize, 
+    decreaseFontSize 
+  } = useConfession();
   
-  // Începem direct cu un mod selectat pentru a evita ecranul gol
+  const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+  const isFocused = useIsFocused(); // Verificăm dacă suntem pe această pagină
+  
   const [mode, setMode] = useState<'adulti' | 'copii'>('adulti');
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showFontSettings, setShowFontSettings] = useState(false);
 
-  const handleAddItem = (id: string, text: string) => {
-    if (Platform.OS !== 'web') {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  // LOGICA PENTRU HEADER REPARATĂ
+  useEffect(() => {
+    if (isFocused) {
+      const headerParent = navigation.getParent() || navigation;
+      headerParent.setOptions({
+        headerLeft: () => (
+          <TouchableOpacity 
+            onPress={() => (navigation as any).openDrawer()} 
+            style={{ marginLeft: 15, padding: 5 }}
+          >
+            <Menu size={24} color="white" />
+          </TouchableOpacity>
+        ),
+        headerTitle: isSearching ? () => (
+          <TextInput
+            placeholder="Caută..."
+            placeholderTextColor="#D1D5DB"
+            style={{ color: 'white', fontSize: 18, width: 200, fontFamily: 'Lora' }}
+            autoFocus
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        ) : "Taina Spovedaniei",
+        headerRight: () => (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity 
+              onPress={() => { setIsSearching(!isSearching); setShowFontSettings(false); }} 
+              style={{ padding: 8 }}
+            >
+              {isSearching ? <X size={22} color="white" /> : <Search size={25} color="white" />}
+            </TouchableOpacity>
+            <TouchableOpacity 
+              onPress={() => setShowFontSettings(!showFontSettings)} 
+              style={{ paddingVertical: 8, paddingHorizontal: 10 }} 
+            >
+              <MoreVertical size={25} color="white" />
+            </TouchableOpacity>
+          </View>
+        ),
+      });
     }
-    addItem({ id, text });
-  };
 
-  const isSelected = (id: string) => {
-    return selectedItems.some((item) => item.id === id);
-  };
+    // Închidem setările dacă plecăm de pe pagină
+    if (!isFocused) {
+      setShowFontSettings(false);
+      setIsSearching(false);
+    }
+  }, [isFocused, isSearching, searchQuery, showFontSettings, navigation]);
 
-  const currentGuide = mode === 'copii' ? CONFESSION_GUIDE_KIDS : CONFESSION_GUIDE;
+  const filteredGuide = useMemo(() => {
+    const base = mode === 'copii' ? CONFESSION_GUIDE_KIDS : CONFESSION_GUIDE;
+    if (!searchQuery.trim()) return base;
+    return base.map(c => ({
+      ...c,
+      items: c.items.filter(i => i.text.toLowerCase().includes(searchQuery.toLowerCase()))
+    })).filter(c => c.items.length > 0);
+  }, [mode, searchQuery]);
 
   return (
     <View style={styles.container}>
-      {/* --- TAB-URILE DE SUS --- */}
-      <View style={[styles.tabsContainer, { paddingTop: insets.top + 10 }]}>
-        <TouchableOpacity 
-          style={[styles.tab, mode === 'adulti' ? styles.activeTab : styles.inactiveTab]} 
-          onPress={() => setMode('adulti')}
-        >
-          <Text style={[styles.tabText, mode === 'adulti' ? styles.activeTabText : styles.inactiveTabText]}>
-            Îndreptar Adulți
-          </Text>
-        </TouchableOpacity>
+      {showFontSettings && (
+        <View style={styles.fontBar}>
+          <Text style={styles.fontLabel}>Dimensiune text:</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity onPress={decreaseFontSize} style={styles.fBtn}>
+              <Text style={styles.fBtnT}>A-</Text>
+            </TouchableOpacity>
+            <Text style={styles.fValue}>{fontSize}</Text>
+            <TouchableOpacity onPress={increaseFontSize} style={styles.fBtn}>
+              <Text style={styles.fBtnT}>A+</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
 
+      <View style={styles.tabContainer}>
         <TouchableOpacity 
-          style={[styles.tab, mode === 'copii' ? styles.activeTab : styles.inactiveTab]} 
-          onPress={() => setMode('copii')}
+          onPress={() => setMode('adulti')} 
+          style={[styles.tab, mode === 'adulti' && styles.activeTab]}
         >
-          <Text style={[styles.tabText, mode === 'copii' ? styles.activeTabText : styles.inactiveTabText]}>
-            Îndreptar Copii
-          </Text>
+          <Text style={[styles.tabT, mode === 'adulti' && styles.activeTabT]}>Adulți</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          onPress={() => setMode('copii')} 
+          style={[styles.tab, mode === 'copii' && styles.activeTab]}
+        >
+          <Text style={[styles.tabT, mode === 'copii' && styles.activeTabT]}>Copii</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: insets.bottom + 40 }
-        ]}
-        showsVerticalScrollIndicator={false}
+        style={{ flex: 1 }} 
+        contentContainerStyle={{ padding: 20, paddingBottom: insets.bottom + 40 }}
       >
-        {currentGuide.map((category) => (
-          <View key={category.id} style={styles.categoryContainer}>
-            <Text style={styles.categoryTitle}>{category.title}</Text>
-            
-            <View style={styles.itemsContainer}>
-              {category.items.map((item) => {
-                const selected = isSelected(item.id);
-                return (
-                  <View key={item.id} style={styles.itemRow}>
-                    <Text style={[styles.itemText, selected && styles.itemTextSelected]}>
-                      {item.text}
-                    </Text>
-                    <TouchableOpacity
-                      style={[styles.addButton, selected && styles.addButtonSelected]}
-                      onPress={() => handleAddItem(item.id, item.text)}
-                      disabled={selected}
-                    >
-                      <Plus 
-                        size={20} 
-                        color={selected ? '#9CA3AF' : '#8B4513'} 
-                        strokeWidth={2.5}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                );
-              })}
-            </View>
+        {filteredGuide.map((cat) => (
+          <View key={cat.id} style={{ marginBottom: 25 }}>
+            <Text style={styles.catTitle}>{cat.title}</Text>
+            {cat.items.map((item) => {
+              const sel = selectedItems.some(i => i.id === item.id);
+              return (
+                <View key={item.id} style={styles.itemCard}>
+                  <Text style={[styles.itemText, { fontSize: fontSize }, sel && styles.selText]}>
+                    {item.text}
+                  </Text>
+                  <TouchableOpacity 
+                    onPress={() => {
+                      if (!sel) {
+                        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        addItem({ id: item.id, text: item.text });
+                      }
+                    }} 
+                    style={[styles.addB, sel && styles.addBSel]}
+                  >
+                    <Plus size={20} color={sel ? "#CCC" : "#8B4513"} />
+                  </TouchableOpacity>
+                </View>
+              );
+            })}
           </View>
         ))}
       </ScrollView>
@@ -92,85 +152,21 @@ export default function GuideScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FAF8F3',
-  },
-  tabsContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 30,
-    backgroundColor: '#FAF8F3',
-    paddingBottom: 20,
-    gap: 20,
-  },
-
-  tab: {
-    flex: 1,
-    paddingVertical: 6,
-    alignItems: 'center',
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-
-  activeTab: {
-    backgroundColor: '#5D2E0A',
-    borderColor: '#5D2E0A',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-  },
-  inactiveTab: {
-    backgroundColor: 'transparent',
-    borderColor: '#D4A373',
-  },
-  tabText: {
-    fontSize: 14,
-    fontFamily: 'Lora-Bold',
-  },
-  activeTabText: {
-    color: '#FFFFFF',
-  },
-  inactiveTabText: {
-    color: '#D4A373',
-  },
-  scrollView: { flex: 1 },
-  scrollContent: { paddingHorizontal: 20 },
-  categoryContainer: { marginBottom: 30 },
-  categoryTitle: { 
-    fontSize: 18, 
-    fontFamily: 'Playfair-Bold', 
-    color: '#5D2E0A', 
-    marginBottom: 15, 
-    textAlign: 'center',
-    textTransform: 'uppercase'
-  },
-  itemsContainer: { gap: 10 },
-  itemRow: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    backgroundColor: '#FFFFFF', 
-    borderRadius: 12, 
-    padding: 16,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-  },
-  itemText: { flex: 1, fontSize: 16, fontFamily: 'Lora', color: '#2C2415' },
-  // AICI ERA EROAREA: am reparat 'line-through'
-  itemTextSelected: { color: '#9CA3AF', textDecorationLine: 'line-through' }, 
-  addButton: { 
-    width: 30, 
-    height: 30, 
-    borderRadius: 10, 
-    backgroundColor: '#FFF8E7', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    borderWidth: 1, 
-    borderColor: '#D4A373' 
-  },
-  addButtonSelected: { backgroundColor: '#F3F4F6', borderColor: '#E5E7EB' },
+  container: { flex: 1, backgroundColor: '#FAF8F3' },
+  fontBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFF8E7', padding: 12, borderBottomWidth: 1, borderBottomColor: '#D4A373' },
+  fontLabel: { fontFamily: 'Lora-Bold', color: '#5D2E0A' },
+  fBtn: { backgroundColor: '#8B4513', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 },
+  fBtnT: { color: 'white', fontWeight: 'bold' },
+  fValue: { marginHorizontal: 15, fontWeight: 'bold', color: '#5D2E0A' },
+  tabContainer: { flexDirection: 'row', padding: 15, justifyContent: 'center' },
+  tab: { paddingVertical: 10, paddingHorizontal: 40, borderRadius: 12, borderWidth: 1, borderColor: '#D4A373', marginHorizontal: 10 },
+  activeTab: { backgroundColor: '#5D2E0A', borderColor: '#5D2E0A' },
+  tabT: { color: '#D4A373', fontWeight: 'bold' },
+  activeTabT: { color: '#FFF' },
+  catTitle: { fontSize: 18, fontWeight: 'bold', color: '#5D2E0A', marginBottom: 15, textAlign: 'center' },
+  itemCard: { flexDirection: 'row', backgroundColor: '#FFF', padding: 15, borderRadius: 12, marginBottom: 10, alignItems: 'center', elevation: 2 },
+  itemText: { flex: 1, color: '#2C2415', lineHeight: 24 },
+  selText: { color: '#AAA', textDecorationLine: 'line-through' },
+  addB: { padding: 5, borderRadius: 8, backgroundColor: '#FFF8E7', marginLeft: 10 },
+  addBSel: { backgroundColor: '#F0F0F0' }
 });

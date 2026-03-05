@@ -13,12 +13,11 @@ export default function TabLayout() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#000000' }}> 
-      {/* ^ Am pus fundalul principal negru ca să "umple" orice spațiu de jos */}
-      
       <MaterialTopTabs
         tabBarPosition="bottom"
         initialRouteName="guide"
         screenOptions={{
+          headerShown: false, // FOARTE IMPORTANT: Ascunde header-ul tab-urilor pentru a-l folosi pe cel global
           swipeEnabled: true,
           tabBarActiveTintColor: "#8B0000",
           tabBarInactiveTintColor: "#D4A373",
@@ -27,36 +26,56 @@ export default function TabLayout() {
             backgroundColor: "#FAF8F3",
             borderTopWidth: 1,
             borderTopColor: "#D4A373",
-            // Înălțime fixă pentru meniu
             height: 65,
             elevation: 0,
           },
-tabBarItemStyle: {
-  height: 100,           // Limitezi înălțimea zonei de atingere
-  justifyContent: 'center', // Centrează conținutul pe verticală
-  paddingTop: 2,        // Te joci cu asta pentru a le urca
-},
+          tabBarItemStyle: {
+            height: 60, // Am ajustat înălțimea pentru a nu fi prea mare
+            justifyContent: 'center',
+          },
           tabBarLabelStyle: { 
             fontSize: 10, 
             fontFamily: 'Lora-Bold', 
             textTransform: 'none',
-	// RIDICAREA TEXTULUI:
-  	marginBottom: 15,  // Valoare pozitivă ridică textul (îl depărtează de bază)
-  	// sau
-  	paddingBottom: 15, 
+            marginBottom: 5, // Ajustat pentru echilibru
           },
           tabBarShowIcon: true,
         }}
       >
-        <MaterialTopTabs.Screen name="prayers" options={{ title: "Rugăciuni înainte", tabBarIcon: ({color}) => <ScrollText size={18} color={color}/> }} />
-        <MaterialTopTabs.Screen name="guide" options={{ title: "Îndreptar", tabBarIcon: ({color}) => <BookOpen size={18} color={color}/> }} />
-        <MaterialTopTabs.Screen name="document" options={{ title: "Note", tabBarIcon: ({color}) => <FileText size={18} color={color}/> }} />
-        <MaterialTopTabs.Screen name="after-prayers" options={{ title: "Rugăciuni după", tabBarIcon: ({color}) => <CheckCircle size={18} color={color}/> }} />
+        <MaterialTopTabs.Screen 
+          name="prayers" 
+          options={{ 
+            title: "Rugăciuni", 
+            tabBarLabel: "Înainte", // Titlu scurt pentru tab
+            tabBarIcon: ({color}) => <ScrollText size={18} color={color}/> 
+          }} 
+        />
+        <MaterialTopTabs.Screen 
+          name="guide" 
+          options={{ 
+            title: "Îndreptar", 
+            tabBarIcon: ({color}) => <BookOpen size={18} color={color}/> 
+          }} 
+        />
+        <MaterialTopTabs.Screen 
+          name="document" 
+          options={{ 
+            title: "Note", 
+            tabBarIcon: ({color}) => <FileText size={18} color={color}/> 
+          }} 
+        />
+        <MaterialTopTabs.Screen 
+          name="after-prayers" 
+          options={{ 
+            title: "După", 
+            tabBarIcon: ({color}) => <CheckCircle size={18} color={color}/> 
+          }} 
+        />
       </MaterialTopTabs>
 
-      {/* AICI ESTE TRUCUL: Un View negru care ocupă spațiul de sub meniu */}
+      {/* Spațiu pentru bara de sistem pe Android */}
       {Platform.OS === 'android' && (
-        <View style={{ height: insets.bottom, height: 45, backgroundColor: '#000000' }} />
+        <View style={{ height: insets.bottom || 20, backgroundColor: '#000000' }} />
       )}
     </View>
   );

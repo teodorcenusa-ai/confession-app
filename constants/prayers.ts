@@ -82,7 +82,19 @@ Deci, luminează-mi ochii inimii mele și dă-mi umilință spre pocăință și
 
 Îndemnul Sfântului Ioan de Kronstadt
 
-Fie ca Dumnezeu cel Preaputernic, prin Sfântul Lui Duh, să inspire în inimile noastre, ale tuturor, pocăință sinceră, așa încât să cunoaștem poruncile Lui, să ne înfruntăm cu adevărat păcatele și să ne spovedim cu smerenie Lui, atât în rugăciunile noastre particulare, cât și la Taina Spovedaniei, astfel încât să scăpăm de greutatea păcatelor noastre, să simțim alinare și să ne eliberăm de vinovăția noastră și să ne unim din nou cu Trupul lui Hristos, care este Biserica. Ce mare dar este Taina Spovedaniei!`
+Fie ca Dumnezeu cel Preaputernic, prin Sfântul Lui Duh, să inspire în inimile noastre, ale tuturor, pocăință sinceră, așa încât să cunoaștem poruncile Lui, să ne înfruntăm cu adevărat păcatele și să ne spovedim cu smerenie Lui, atât în rugăciunile noastre particulare, cât și la Taina Spovedaniei, astfel încât să scăpăm de greutatea păcatelor noastre, să simțim alinare și să ne eliberăm de vinovăția noastră și să ne unim din nou cu Trupul lui Hristos, care este Biserica. Ce mare dar este Taina Spovedaniei!
+
+Rugăciune pentru duhovnic
+
+Doamne Iisuse Hristoase, Fiul lui Dumnezeu, Care pe desfrânata și pe tâlharul i-ai primit, primește și rugăciunea mea pentru robul tău, duhovnicul meu (N), ales de Tine să poarte povara păcatelor mele în fața Ta, așa cum Tu porți povara lumii întregi în fața Tatălui Ceresc. Iartă-i toate greșelile lui, pentru dragostea și jertfa lui stăruitoare, ca să pun început bun de pocăință și eu, oaia cea rătăcită. Cercetează-l degrab și vezi nevoile lui. Vindecă-l de toată boala și întinăciunea trupească și sufletească și de slăbiciunea și neputința firii celei căzute. Izbăvește-l de toți vrăjmașii văzuți și nevăzuți, de tot răul și ispitele care i-au venit pentru păcatele mele. Sporește-i înțelepciunea, îndelunga răbdare, liniștea, pacea și mulțumirea sufletească. Înmulțește-i puterea, sporește-i blândețea și purtarea de grijă și împlinește toate cele de folos lui. Dă-i minte luminată și priceperea sfântă care se pogoară de la Tine, Împăratul Luminii. Bine-sporește într-însul, Doamne, și dăruiește-l sănătos, îndelungat în zile, drept învățând cuvântul adevărului Tău.
+
+Împărate, Mângâietorule, deschide stăvilele cerului și plouă peste duhovnicul meu (N) belșug de har și bogată milă. Pogoară-Te asupra lui, odihnește într-însul pururea și revarsă peste el mulțimea îndurărilor Tale.
+
+Preasfântă Născătoare de Dumnezeu, acoperă cu atotputernicul tău acoperământ pe robul tău, duhovnicul meu (N), și roagă-te Bunului Dumnezeu să-l miluiască și să-l mântuiască pentru rugăciunile tale. Izbăvește-l de toată ispita trupească și sufletească, curățește-l, tămăduiește-l, întărește-l și sănătate deplină dăruiește-i.
+
+Sfinților Ierarhi Vasile cel Mare, Ioan Postitorul și toți sfinții ierarhi, rugați-vă Bunului Dumnezeu să miluiască și să mântuiască pe duhovnicul meu (N), pentru rugăciunile voastre.
+
+Cele nouă puteri cerești, sfinților mucenici și mucenițe, cuvioși și cuvioase, sfinților români, sfinților a căror pomenire se face astăzi, împreună cu toți sfinții, rugați-vă lui Dumnezeu să miluiască și să mântuiască pe duhovnicul meu (N), pentru rugăciunile voastre. Amin.`
 
 
 export const POST_CONFESSION_PRAYERS = `
