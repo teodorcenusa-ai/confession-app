@@ -35,30 +35,41 @@ interface ConfessionContextType {
 }
 
 const JOURNAL_STORAGE_KEY = '@confession_journal_entries';
+const SELECTED_ITEMS_KEY = '@confession_selected_items';
+const CUSTOM_TEXT_KEY = '@confession_custom_text';
+const FONT_SIZE_KEY = '@confession_font_size';
 
 const ConfessionContext = createContext<ConfessionContextType | undefined>(undefined);
 
 export function ConfessionProvider({ children }: { children: React.ReactNode }) {
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
-  const [customText, setCustomText] = useState<string>('');
-  const [fontSize, setFontSize] = useState<number>(18);
+  const [customText, setCustomTextState] = useState<string>('');
+  const [fontSize, setFontSizeState] = useState<number>(18);
   const [journalEntries, setJournalEntries] = useState<ConfessionEntry[]>([]);
 
-  // Încărcare jurnal din stocarea locală la pornire
+  // 1. Încărcarea tuturor datelor din AsyncStorage la pornire
   useEffect(() => {
-    async function loadJournal() {
+    async function loadStoredData() {
       try {
-        const data = await AsyncStorage.getItem(JOURNAL_STORAGE_KEY);
-        if (data) {
-          setJournalEntries(JSON.parse(data));
-        }
+        const [storedJournal, storedItems, storedText, storedFont] = await Promise.all([
+          AsyncStorage.getItem(JOURNAL_STORAGE_KEY),
+          AsyncStorage.getItem(SELECTED_ITEMS_KEY),
+          AsyncStorage.getItem(CUSTOM_TEXT_KEY),
+          AsyncStorage.getItem(FONT_SIZE_KEY),
+        ]);
+
+        if (storedJournal) setJournalEntries(JSON.parse(storedJournal));
+        if (storedItems) setSelectedItems(JSON.parse(storedItems));
+        if (storedText !== null) setCustomTextState(storedText);
+        if (storedFont) setFontSizeState(Number(storedFont));
       } catch (e) {
-        console.error('Eroare la încărcarea jurnalului:', e);
+        console.error('Eroare la încărcarea datelor salvate:', e);
       }
     }
-    loadJournal();
+    loadStoredData();
   }, []);
 
+  // --- LOGICĂ JURNAL ---
   const saveJournalEntries = useCallback(async (entries: ConfessionEntry[]) => {
     try {
       await AsyncStorage.setItem(JOURNAL_STORAGE_KEY, JSON.stringify(entries));
@@ -104,34 +115,74 @@ export function ConfessionProvider({ children }: { children: React.ReactNode }) 
     });
   }, []);
 
+  // --- LOGICĂ PĂCATE SELECTATE (PERSISTENTĂ) ---
   const addItem = useCallback((item: SelectedItem) => {
     setSelectedItems((prev) => {
       if (prev.some((i) => i.id === item.id)) return prev;
-      return [...prev, item];
+      const updated = [...prev, item];
+      AsyncStorage.setItem(SELECTED_ITEMS_KEY, JSON.stringify(updated)).catch((e) =>
+        console.error('Eroare la salvarea păcatelor selectate:', e)
+      );
+      return updated;
     });
   }, []);
 
   const removeItem = useCallback((id: string) => {
-    setSelectedItems((prev) => prev.filter((item) => item.id !== id));
+    setSelectedItems((prev) => {
+      const updated = prev.filter((item) => item.id !== id);
+      AsyncStorage.setItem(SELECTED_ITEMS_KEY, JSON.stringify(updated)).catch((e) =>
+        console.error('Eroare la eliminarea păcatului:', e)
+      );
+      return updated;
+    });
   }, []);
 
   const updateItem = useCallback((id: string, newText: string) => {
-    setSelectedItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, text: newText } : item))
-    );
+    setSelectedItems((prev) => {
+      const updated = prev.map((item) => (item.id === id ? { ...item, text: newText } : item));
+      AsyncStorage.setItem(SELECTED_ITEMS_KEY, JSON.stringify(updated)).catch((e) =>
+        console.error('Eroare la actualizarea păcatului:', e)
+      );
+      return updated;
+    });
   }, []);
 
   const clearItems = useCallback(() => {
     setSelectedItems([]);
-    setCustomText('');
+    setCustomTextState('');
+    AsyncStorage.removeItem(SELECTED_ITEMS_KEY).catch((e) =>
+      console.error('Eroare la curățarea păcatelor:', e)
+    );
+    AsyncStorage.removeItem(CUSTOM_TEXT_KEY).catch((e) =>
+      console.error('Eroare la curățarea textului personalizat:', e)
+    );
+  }, []);
+
+  const setCustomText = useCallback((text: string) => {
+    setCustomTextState(text);
+    AsyncStorage.setItem(CUSTOM_TEXT_KEY, text).catch((e) =>
+      console.error('Eroare la salvarea textului personalizat:', e)
+    );
   }, []);
 
   const increaseFontSize = useCallback(() => {
-    setFontSize((prev) => (prev < 34 ? prev + 2 : prev));
+    setFontSizeState((prev) => {
+      const newSize = prev < 34 ? prev + 2 : prev;
+      AsyncStorage.setItem(FONT_SIZE_KEY, newSize.toString()).catch((e) =>
+        console.error('Eroare la salvarea dimensiunii fontului:', e)
+      );
+      return newSize;
+    });
   }, []);
 
   const decreaseFontSize = useCallback(() => {
-    setFontSize((prev) => (prev > 14 ? prev - 2 : prev));
+    setFontSizeState((prev) => {
+      const newSize = prev > 14 ? prev - 2 : prev;
+      AsyncStorage.setItem(FONT_SIZE_KEY, newSize.toString()).catch((e) =>
+        console.error('Eroare la salvarea dimensiunii fontului:', e)
+      );
+      return newSize;
+    });
   }, []);
 
   const value = useMemo(
@@ -155,6 +206,7 @@ export function ConfessionProvider({ children }: { children: React.ReactNode }) 
       selectedItems,
       customText,
       fontSize,
+      setCustomText,
       addItem,
       removeItem,
       updateItem,

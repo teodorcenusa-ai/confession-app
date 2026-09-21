@@ -76,7 +76,7 @@ export default function RootLayout() {
             }}
           />
 
-          {/* 2. Ecranele din drawer */}
+          {/* 2. Ecranele din drawer (puse direct unul după altul) */}
           <Drawer.Screen
             name="(drawer)/journal"
             options={{
@@ -112,6 +112,17 @@ export default function RootLayout() {
               drawerIcon: ({ color }) => <Ionicons name="library-outline" size={22} color={color} />,
             }}
           />
+
+          <Drawer.Screen
+            name="(drawer)/cleopa-guide"
+            options={{
+              drawerLabel: 'Îndreptar - Sf. Cleopa',
+              headerTitle: 'Îndreptar Sf. Cleopa',
+              drawerIcon: ({ color }) => <Ionicons name="document-text-outline" size={22} color={color} />,
+            }}
+          />
+
+
 
           {/* 3. Ascundem rutele automate 'index' și '+not-found' din meniu */}
           <Drawer.Screen

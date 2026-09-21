@@ -1,15 +1,16 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native';
-import { Plus, Search, X, MoreVertical, Menu } from 'lucide-react-native';
+import { Plus, Check, Search, X, MoreVertical, Menu } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation, usePathname } from 'expo-router'; // FOLOSIM USEPATHNAME DIN EXPO-ROUTER
+import { useNavigation, usePathname } from 'expo-router';
 import { CONFESSION_GUIDE, CONFESSION_GUIDE_KIDS } from '../../constants/confessionItems';
 import { useConfession } from '../../contexts/ConfessionContext';
 
 export default function GuideScreen() {
   const { 
     addItem, 
+    removeItem, 
     selectedItems, 
     fontSize, 
     increaseFontSize, 
@@ -20,7 +21,6 @@ export default function GuideScreen() {
   const navigation = useNavigation();
   const pathname = usePathname();
   
-  // Verificăm dacă suntem pe această pagină folosind calea rutei din Expo Router
   const isFocused = pathname.includes('guide');
   
   const [mode, setMode] = useState<'adulti' | 'copii'>('adulti');
@@ -54,7 +54,16 @@ export default function GuideScreen() {
         headerRight: () => (
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TouchableOpacity 
-              onPress={() => { setIsSearching(!isSearching); setShowFontSettings(false); }} 
+              onPress={() => {
+                if (isSearching) {
+                  // AICI ESTE REPARAȚIA: Când apeși pe X, ștergem și textul de căutare
+                  setSearchQuery('');
+                  setIsSearching(false);
+                } else {
+                  setIsSearching(true);
+                  setShowFontSettings(false);
+                }
+              }} 
               style={{ padding: 8 }}
             >
               {isSearching ? <X size={22} color="white" /> : <Search size={25} color="white" />}
@@ -73,6 +82,7 @@ export default function GuideScreen() {
     if (!isFocused) {
       setShowFontSettings(false);
       setIsSearching(false);
+      setSearchQuery(''); // Curăță textul de căutare și când pleci de pe pagină
     }
   }, [isFocused, isSearching, searchQuery, showFontSettings, navigation]);
 
@@ -84,6 +94,17 @@ export default function GuideScreen() {
       items: c.items.filter(i => i.text.toLowerCase().includes(searchQuery.toLowerCase()))
     })).filter(c => c.items.length > 0);
   }, [mode, searchQuery]);
+
+  // Funcție ajutătoare pentru adăugare/eliminare
+  const handleToggleItem = (item: { id: string; text: string }, isSelected: boolean) => {
+    if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    
+    if (isSelected) {
+      removeItem(item.id);
+    } else {
+      addItem({ id: item.id, text: item.text });
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -127,22 +148,23 @@ export default function GuideScreen() {
             {cat.items.map((item) => {
               const sel = selectedItems.some(i => i.id === item.id);
               return (
-                <View key={item.id} style={styles.itemCard}>
+                <TouchableOpacity 
+                  key={item.id} 
+                  style={[styles.itemCard, sel && styles.itemCardSel]}
+                  onPress={() => handleToggleItem(item, sel)}
+                  activeOpacity={0.8}
+                >
                   <Text style={[styles.itemText, { fontSize: fontSize }, sel && styles.selText]}>
                     {item.text}
                   </Text>
-                  <TouchableOpacity 
-                    onPress={() => {
-                      if (!sel) {
-                        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                        addItem({ id: item.id, text: item.text });
-                      }
-                    }} 
-                    style={[styles.addB, sel && styles.addBSel]}
-                  >
-                    <Plus size={20} color={sel ? "#CCC" : "#8B4513"} />
-                  </TouchableOpacity>
-                </View>
+                  <View style={[styles.addB, sel && styles.addBSel]}>
+                    {sel ? (
+                      <Check size={20} color="#5D2E0A" />
+                    ) : (
+                      <Plus size={20} color="#8B4513" />
+                    )}
+                  </View>
+                </TouchableOpacity>
               );
             })}
           </View>
@@ -166,8 +188,9 @@ const styles = StyleSheet.create({
   activeTabT: { color: '#FFF' },
   catTitle: { fontSize: 18, fontWeight: 'bold', color: '#5D2E0A', marginBottom: 15, textAlign: 'center' },
   itemCard: { flexDirection: 'row', backgroundColor: '#FFF', padding: 15, borderRadius: 12, marginBottom: 10, alignItems: 'center', elevation: 2 },
+  itemCardSel: { backgroundColor: '#F5EBE1', borderColor: '#D4A373', borderWidth: 1 },
   itemText: { flex: 1, color: '#2C2415', lineHeight: 24 },
-  selText: { color: '#AAA', textDecorationLine: 'line-through' },
+  selText: { color: '#8C7A6B', textDecorationLine: 'line-through' },
   addB: { padding: 5, borderRadius: 8, backgroundColor: '#FFF8E7', marginLeft: 10 },
-  addBSel: { backgroundColor: '#F0F0F0' }
+  addBSel: { backgroundColor: '#E6D2C1' }
 });
