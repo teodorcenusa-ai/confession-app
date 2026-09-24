@@ -2,7 +2,7 @@
   "expo": {
     "name": "Taina Spovedaniei",
     "slug": "confession-app",
-    "version": "1.1.6",
+    "version": "1.1.7",
     "scheme": "taina-spovedaniei",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -25,7 +25,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "ro.teodor.taina.spovedanie",
-      "versionCode": 7,
+      "versionCode": 8,
       "targetSdkVersion": 36
     },
     "extra": {
