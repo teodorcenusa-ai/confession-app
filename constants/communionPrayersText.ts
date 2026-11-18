@@ -32,10 +32,6 @@ Acest canon face parte din Rânduiala Sfintei Împărtășiri.
 
 Cântarea 1:
 
-Irmos:
-
-Veniți, popoare, să cântăm cântare lui Hristos Dumnezeu, Cel ce a despicat marea și a călăuzit pe poporul pe care l-a scos din robia egiptenilor, că S-a preaslăvit.
-
 Stih: Inimă curată zidește întru mine, Dum­­nezeule, și duh drept înnoiește întru cele din­lăuntru ale mele.
 
 Pâine a vieții celei veșnice să-mi fie mie Trupul Tău cel sfânt, Milos­tive Doamne, și scump Sângele Tău, și tă­mă­duire durerilor celor de multe feluri.
@@ -53,10 +49,6 @@ Slavă Tatălui și Fiului și Sfântului Duh,
 Dumnezeiască Mireasă, ceea ce ești bună și binecuvântată, care ai odrăslit Spicul cel nearat spre mântuire lumii, învrednicește-mă ca, mân­cându-L pe Acesta, să mă mântuiesc.
 
 Cântarea 3:
-
-Irmos:
-
-Pe piatra credinței întărindu-mă, Tu ai deschis gura mea asupra vrăjmașilor mei; că s-a veselit duhul meu a cânta Ție: Nu este sfânt ca Dumnezeul nostru și nu este drept afară de Tine, Doamne.
 
 Stih: Inimă curată zidește întru mine, Dum­­nezeule, și duh drept înnoiește întru cele din­lăuntru ale mele.
 
@@ -82,10 +74,6 @@ Foc și lumină să-mi fie mie primi­rea Preacuratelor și de viață făcă­t
 
 Cântarea 4:
 
-Irmos:
-
-Ai venit din Fecioară, nu sol, nici înger, ci Tu Însuți, Doamne, Te-ai întrupat și m-ai mântuit pe mine, omul; pentru aceasta strig către Tine: Slavă puterii Tale, Doamne.
-
 Stih: Inimă curată zidește întru mine, Dum­­nezeule, și duh drept înnoiește întru cele din­lăuntru ale mele.
 
 Întrupându-Te, Mult-milostive, voit-ai a Te da spre junghiere, ca un miel, pentru păcatele noastre. Pen­tru aceasta mă rog Ție să curățești și păcatele mele.
@@ -104,10 +92,6 @@ Fă și mie milostiv pe Cel ce L-ai purtat în pântecele tău, stăpână, și 
 
 Cântarea 5:
 
-Irmos:
-
-Dătătorule de lumină al celor ce zăceau întru întuneric și mântuirea celor deznădăjduiți Tu ești, Hristoase, Mântuitorul meu și la Tine mânec, Împăratul păcii, luminează-mă cu strălucirea Ta, că nu știu alt dumnezeu afară de Tine.
-
 Stih: Inimă curată zidește întru mine, Dum­­nezeule, și duh drept înnoiește întru cele din­lăuntru ale mele.
 
 Precum ai zis mai înainte, Hris­toase, fii acum cu smeritul robul Tău și pe­trece întru mine, precum ai fă­găduit, că, iată, mănânc Trupul Tău cel dumnezeiesc și beau Sângele Tău.
@@ -125,10 +109,6 @@ Având suflet întinat și buze necurate, nu cutez să mă apropii de Tine, Hris
 Marie, Maica lui Dumnezeu, care ești sălaș scump al bunei miresme, cu rugă­ciunile tale fă-mă vas ales pentru a mă împărtăși cu Sfintele Taine ale Fiului tău.
 
 Cântarea 6:
-
-Irmos:
-
-De adâncul păcatelor fiind înconjurat, chem adâncul cel nepătruns al milostivirii Tale: Scoate-mă din stricăciune, Dumnezeule.
 
 Stih: Inimă curată zidește întru mine, Dum­­nezeule, și duh drept înnoiește întru cele din­lăuntru ale mele.
 
@@ -155,10 +135,6 @@ Să nu mă treci cu vederea, Hris­toase, pe mine, cel ce primesc Pâinea, adic�
 
 Cântarea 7:
 
-Irmosul:
-
-Chipul cel de aur în câmpul Deira de păgâni fiind cinstit, cei trei tineri au călcat porunca cea fără de Dumnezeu; și, fiind aruncați în mijlocul focului, răcorindu-se au cântat: Binecuvântat ești, Dumnezeul părinților noștri!
-
 Stih: Inimă curată zidește întru mine, Dum­­nezeule, și duh drept înnoiește întru cele din­lăuntru ale mele.
 
 Împărtășirea nemuritoarelor Tale Tai­ne, Hristoase, să-mi fie mie acum izvor de bunătăți, lumină, viață, nepă­­­ti­­mire și solire spre adăugirea și în­mulțirea dumnezeieștii Tale bună­tăți, ca să Te slăvesc pe Tine, Cel ce singur ești bun.
@@ -177,10 +153,6 @@ Ceea ce ai născut pe Mântuitorul Hristos mai presus de minte, de Dum­­nezeu 
 
 Cântarea 8:
 
-Irmos:
-
-Pe Dumnezeu, Cel ce S-a pogorât în cuptorul cel cu foc, la tinerii cei de demult, și văpaia în răcoreală a prefăcut-o, lăudați-L făpturi ca pe Domnul și-L preaînălțați întru toți vecii.
-
 Stih: Inimă curată zidește întru mine, Dum­­nezeule, și duh drept înnoiește întru cele din­lăuntru ale mele.
 
 Cereștilor, înfricoșătoarelor și Sfin­­­telor Tale Taine, Hristoase, și Cinei Tale celei dumnezeiești și de taină și pe mine, cel deznădăjduit, acum păr­taș a fi mă învrednicește, Dumne­ze­ule, Mân­tuitorul meu.
@@ -198,10 +170,6 @@ Mă cutremur, primind focul, să nu mă aprind ca ceara și ca iarba. O, în­fr
 Cu adevărat, Maica lui Dumne­zeu, în pântecele tău S-a copt Pâinea cea dumnezeiască a Vieții, păzind nevă­tă­mat pântecele tău cel nevinovat. Pen­tru aceasta te lăudăm pe tine ca pe hrănitoarea noastră, întru toți vecii.
 
 Cântarea 9:
-
-Irmos:
-
-Fiul Părintelui Celui fără de început, Dumnezeu și Domnul, întrupându-Se din fecioară S-a arătat nouă ca să lumineze cele întunecate și să adune cele risipite. Pentru aceasta pe Născătoarea de Dumnezeu, cea întru tot lăudată, o slăvim.
 
 Stih: Inimă curată zidește întru mine, Dum­­nezeule, și duh drept înnoiește întru cele din­lăuntru ale mele.
 
