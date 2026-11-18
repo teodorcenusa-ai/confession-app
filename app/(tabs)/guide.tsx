@@ -1,9 +1,10 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native';
 import { Plus, Check, Search, X, MoreVertical, Menu } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation, usePathname } from 'expo-router';
+import { useNavigation, usePathname, useFocusEffect } from 'expo-router';
+// Căile tale originale intacte:
 import { CONFESSION_GUIDE, CONFESSION_GUIDE_KIDS } from '../../constants/confessionItems';
 import { useConfession } from '../../contexts/ConfessionContext';
 
@@ -23,15 +24,33 @@ export default function GuideScreen() {
   
   const isFocused = pathname.includes('guide');
   
-  const [mode, setMode] = useState<'adulti' | 'copii'>('adulti');
+const [mode, setMode] = useState<'adulti' | 'copii'>('adulti');
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showFontSettings, setShowFontSettings] = useState(false);
 
+  // Funcție dedicată pentru a închide căutarea și a curăța totul curat
+  const handleCloseSearch = useCallback(() => {
+    setIsSearching(false);
+    setSearchQuery('');
+  }, []);
+
+  // Curăță totul când părăsești pagina
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setIsSearching(false);
+        setSearchQuery('');
+        setShowFontSettings(false);
+      };
+    }, [handleCloseSearch])
+  );
+
   // LOGICA PENTRU HEADER
   useEffect(() => {
+    const headerParent = navigation.getParent() || navigation;
+    
     if (isFocused) {
-      const headerParent = navigation.getParent() || navigation;
       headerParent.setOptions({
         headerLeft: () => (
           <TouchableOpacity 
@@ -56,9 +75,7 @@ export default function GuideScreen() {
             <TouchableOpacity 
               onPress={() => {
                 if (isSearching) {
-                  // AICI ESTE REPARAȚIA: Când apeși pe X, ștergem și textul de căutare
-                  setSearchQuery('');
-                  setIsSearching(false);
+                  handleCloseSearch();
                 } else {
                   setIsSearching(true);
                   setShowFontSettings(false);
@@ -78,13 +95,7 @@ export default function GuideScreen() {
         ),
       });
     }
-
-    if (!isFocused) {
-      setShowFontSettings(false);
-      setIsSearching(false);
-      setSearchQuery(''); // Curăță textul de căutare și când pleci de pe pagină
-    }
-  }, [isFocused, isSearching, searchQuery, showFontSettings, navigation]);
+  }, [isFocused, isSearching, showFontSettings, navigation, searchQuery, handleCloseSearch]);
 
   const filteredGuide = useMemo(() => {
     const base = mode === 'copii' ? CONFESSION_GUIDE_KIDS : CONFESSION_GUIDE;
@@ -95,7 +106,6 @@ export default function GuideScreen() {
     })).filter(c => c.items.length > 0);
   }, [mode, searchQuery]);
 
-  // Funcție ajutătoare pentru adăugare/eliminare
   const handleToggleItem = (item: { id: string; text: string }, isSelected: boolean) => {
     if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     

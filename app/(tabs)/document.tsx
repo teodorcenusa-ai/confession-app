@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useConfession } from '../../contexts/ConfessionContext';
-import { Trash2, X, Send, MoreVertical, Menu } from 'lucide-react-native';
+import { Trash2, X, Send, MoreVertical, Menu, Printer } from 'lucide-react-native';
 import { 
   Platform, 
   ScrollView, 
@@ -11,9 +11,11 @@ import {
   View, 
   KeyboardAvoidingView, 
   Keyboard, 
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  Alert
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import * as Print from 'expo-print';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, usePathname } from 'expo-router';
 
@@ -27,6 +29,69 @@ export default function DocumentScreen() {
   const isFocused = pathname.includes('document');
   
   const [showFontSettings, setShowFontSettings] = useState(false);
+
+  // Funcție pentru printarea sau salvarea ca PDF a listei de păcate
+  const handlePrint = async () => {
+    if (selectedItems.length === 0) {
+      Alert.alert('Listă goală', 'Nu există elemente în listă pentru a fi printate.');
+      return;
+    }
+
+    if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    try {
+      const itemsHtml = selectedItems
+        .map((item, index) => `
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 12px; text-align: center; color: #7f8c8d; width: 40px;">${index + 1}</td>
+            <td style="padding: 12px; color: #2c3e50; font-size: 15px; line-height: 1.5;">${item.text}</td>
+          </tr>
+        `)
+        .join('');
+
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <style>
+              body { font-family: 'Helvetica', Arial, sans-serif; padding: 40px; color: #333; background-color: #fff; }
+              h1 { color: #5D2E0A; text-align: center; text-transform: uppercase; font-size: 22px; margin-bottom: 5px; }
+              .subtitle { text-align: center; color: #D4A373; font-size: 13px; text-transform: uppercase; margin-bottom: 30px; letter-spacing: 1px; }
+              .date { font-size: 12px; color: #7f8c8d; margin-bottom: 20px; text-align: right; }
+              table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+              th { background-color: #FAF8F3; color: #5D2E0A; padding: 10px; border-bottom: 2px solid #D4A373; text-align: left; }
+            </style>
+          </head>
+          <body>
+            <h1>Păcatele Mele</h1>
+            <div class="subtitle">Listă pentru Spovedanie</div>
+            <div class="date">Data: ${new Date().toLocaleDateString('ro-RO')}</div>
+            <table>
+              <thead>
+                <tr>
+                  <th style="text-align: center; width: 40px;">#</th>
+                  <th>Păcat / Notă</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsHtml}
+              </tbody>
+            </table>
+          </body>
+        </html>
+      `;
+
+      // Deschide direct fereastra nativă de printare / salvare PDF
+      await Print.printAsync({
+        html: htmlContent,
+      });
+
+    } catch (error) {
+      console.error('Erore la printare:', error);
+      Alert.alert('Erore', 'A apărut o problemă la generarea documentului pentru printare.');
+    }
+  };
 
   useEffect(() => {
     if (isFocused) {
@@ -48,18 +113,29 @@ export default function DocumentScreen() {
           </TouchableOpacity>
         ),
         headerRight: () => (
-          <TouchableOpacity 
-            onPress={() => setShowFontSettings(prev => !prev)} 
-            style={{ paddingVertical: 8, paddingHorizontal: 15 }} 
-          >
-            <MoreVertical size={25} color="white" />
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {/* Buton Print în Header */}
+            <TouchableOpacity 
+              onPress={handlePrint} 
+              style={{ paddingVertical: 8, paddingHorizontal: 10 }}
+            >
+              <Printer size={22} color="white" />
+            </TouchableOpacity>
+
+            {/* Buton Setări Font */}
+            <TouchableOpacity 
+              onPress={() => setShowFontSettings(prev => !prev)} 
+              style={{ paddingVertical: 8, paddingHorizontal: 10, marginRight: 5 }} 
+            >
+              <MoreVertical size={24} color="white" />
+            </TouchableOpacity>
+          </View>
         ),
       });
     } else {
       setShowFontSettings(false);
     }
-  }, [isFocused, showFontSettings, navigation]);
+  }, [isFocused, showFontSettings, navigation, selectedItems]);
 
   const handleRemoveItem = (id: string) => {
     if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -190,9 +266,9 @@ const styles = StyleSheet.create({
   // STIL TITLU MODIFICAT
   sectionTitle: { 
     fontFamily: 'Playfair-Bold', 
-    fontWeight: 'bold', // BOLD
+    fontWeight: 'bold', 
     textAlign: 'center', 
-    marginTop: 30,      // MAI JOS
+    marginTop: 30,      
     marginBottom: 20, 
     color: '#5D2E0A', 
     textTransform: 'uppercase' 

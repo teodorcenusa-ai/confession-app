@@ -76,7 +76,7 @@ export default function RootLayout() {
             }}
           />
 
-          {/* 2. Ecranele din drawer (puse direct unul după altul) */}
+          {/* 2. Ecranele din drawer */}
           <Drawer.Screen
             name="(drawer)/journal"
             options={{
@@ -121,10 +121,24 @@ export default function RootLayout() {
               drawerIcon: ({ color }) => <Ionicons name="document-text-outline" size={22} color={color} />,
             }}
           />
+<Drawer.Screen
+            name="(drawer)/communion-prays"
+            options={{
+              drawerLabel: 'Canon de Împărtășanie',
+              headerTitle: 'Canon de Împărtășanie',
+              drawerIcon: ({ color }) => <Ionicons name="flame-outline" size={22} color={color} />,
+            }}
+          />
+<Drawer.Screen
+            name="(drawer)/thanksgiving-prays"
+            options={{
+              drawerLabel: 'Rugăciuni de Mulțumire',
+              headerTitle: 'Rugăciuni de Mulțumire',
+              drawerIcon: ({ color }) => <Ionicons name="sparkles-outline" size={22} color={color} />,
+            }}
+          />
 
-
-
-          {/* 3. Ascundem rutele automate 'index' și '+not-found' din meniu */}
+          {/* 3. Ascundem rutele automate */}
           <Drawer.Screen
             name="index"
             options={{

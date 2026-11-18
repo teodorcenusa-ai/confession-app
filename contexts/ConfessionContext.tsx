@@ -11,6 +11,8 @@ export interface ConfessionEntry {
   date: string;
   location?: string;
   canon?: string;
+  canonDays?: number;
+  rawDate?: string;
   isCanonCompleted: boolean;
   notes?: string;
 }
@@ -30,6 +32,7 @@ interface ConfessionContextType {
   // Jurnal Spovedanie
   journalEntries: ConfessionEntry[];
   addJournalEntry: (entry: Omit<ConfessionEntry, 'id'>) => Promise<void>;
+  updateJournalEntry: (id: string, updatedData: Partial<ConfessionEntry>) => Promise<void>; // <-- Funcția de actualizare
   toggleCanonCompleted: (id: string) => Promise<void>;
   deleteJournalEntry: (id: string) => Promise<void>;
 }
@@ -63,7 +66,7 @@ export function ConfessionProvider({ children }: { children: React.ReactNode }) 
         if (storedText !== null) setCustomTextState(storedText);
         if (storedFont) setFontSizeState(Number(storedFont));
       } catch (e) {
-        console.error('Eroare la încărcarea datelor salvate:', e);
+        console.error('Erore la încărcarea datelor salvate:', e);
       }
     }
     loadStoredData();
@@ -75,7 +78,7 @@ export function ConfessionProvider({ children }: { children: React.ReactNode }) 
       await AsyncStorage.setItem(JOURNAL_STORAGE_KEY, JSON.stringify(entries));
       setJournalEntries(entries);
     } catch (e) {
-      console.error('Eroare la salvarea jurnalului:', e);
+      console.error('Erore la salvarea jurnalului:', e);
     }
   }, []);
 
@@ -87,7 +90,20 @@ export function ConfessionProvider({ children }: { children: React.ReactNode }) 
     setJournalEntries((prev) => {
       const updated = [newEntry, ...prev];
       AsyncStorage.setItem(JOURNAL_STORAGE_KEY, JSON.stringify(updated)).catch((e) =>
-        console.error('Eroare la salvarea jurnalului:', e)
+        console.error('Erore la salvarea jurnalului:', e)
+      );
+      return updated;
+    });
+  }, []);
+
+  // Funcție de actualizare pentru înregistrările din jurnal (editare)
+  const updateJournalEntry = useCallback(async (id: string, updatedData: Partial<ConfessionEntry>) => {
+    setJournalEntries((prev) => {
+      const updated = prev.map((item) =>
+        item.id === id ? { ...item, ...updatedData } : item
+      );
+      AsyncStorage.setItem(JOURNAL_STORAGE_KEY, JSON.stringify(updated)).catch((e) =>
+        console.error('Erore la actualizarea jurnalului:', e)
       );
       return updated;
     });
@@ -99,7 +115,7 @@ export function ConfessionProvider({ children }: { children: React.ReactNode }) 
         item.id === id ? { ...item, isCanonCompleted: !item.isCanonCompleted } : item
       );
       AsyncStorage.setItem(JOURNAL_STORAGE_KEY, JSON.stringify(updated)).catch((e) =>
-        console.error('Eroare la salvarea jurnalului:', e)
+        console.error('Erore la salvarea jurnalului:', e)
       );
       return updated;
     });
@@ -109,7 +125,7 @@ export function ConfessionProvider({ children }: { children: React.ReactNode }) 
     setJournalEntries((prev) => {
       const updated = prev.filter((item) => item.id !== id);
       AsyncStorage.setItem(JOURNAL_STORAGE_KEY, JSON.stringify(updated)).catch((e) =>
-        console.error('Eroare la salvarea jurnalului:', e)
+        console.error('Erore la salvarea jurnalului:', e)
       );
       return updated;
     });
@@ -121,7 +137,7 @@ export function ConfessionProvider({ children }: { children: React.ReactNode }) 
       if (prev.some((i) => i.id === item.id)) return prev;
       const updated = [...prev, item];
       AsyncStorage.setItem(SELECTED_ITEMS_KEY, JSON.stringify(updated)).catch((e) =>
-        console.error('Eroare la salvarea păcatelor selectate:', e)
+        console.error('Erore la salvarea păcatelor selectate:', e)
       );
       return updated;
     });
@@ -131,7 +147,7 @@ export function ConfessionProvider({ children }: { children: React.ReactNode }) 
     setSelectedItems((prev) => {
       const updated = prev.filter((item) => item.id !== id);
       AsyncStorage.setItem(SELECTED_ITEMS_KEY, JSON.stringify(updated)).catch((e) =>
-        console.error('Eroare la eliminarea păcatului:', e)
+        console.error('Erore la eliminarea păcatului:', e)
       );
       return updated;
     });
@@ -141,7 +157,7 @@ export function ConfessionProvider({ children }: { children: React.ReactNode }) 
     setSelectedItems((prev) => {
       const updated = prev.map((item) => (item.id === id ? { ...item, text: newText } : item));
       AsyncStorage.setItem(SELECTED_ITEMS_KEY, JSON.stringify(updated)).catch((e) =>
-        console.error('Eroare la actualizarea păcatului:', e)
+        console.error('Erore la actualizarea păcatului:', e)
       );
       return updated;
     });
@@ -151,17 +167,17 @@ export function ConfessionProvider({ children }: { children: React.ReactNode }) 
     setSelectedItems([]);
     setCustomTextState('');
     AsyncStorage.removeItem(SELECTED_ITEMS_KEY).catch((e) =>
-      console.error('Eroare la curățarea păcatelor:', e)
+      console.error('Erore la curățarea păcatelor:', e)
     );
     AsyncStorage.removeItem(CUSTOM_TEXT_KEY).catch((e) =>
-      console.error('Eroare la curățarea textului personalizat:', e)
+      console.error('Erore la curățarea textului personalizat:', e)
     );
   }, []);
 
   const setCustomText = useCallback((text: string) => {
     setCustomTextState(text);
     AsyncStorage.setItem(CUSTOM_TEXT_KEY, text).catch((e) =>
-      console.error('Eroare la salvarea textului personalizat:', e)
+      console.error('Erore la salvarea textului personalizat:', e)
     );
   }, []);
 
@@ -169,7 +185,7 @@ export function ConfessionProvider({ children }: { children: React.ReactNode }) 
     setFontSizeState((prev) => {
       const newSize = prev < 34 ? prev + 2 : prev;
       AsyncStorage.setItem(FONT_SIZE_KEY, newSize.toString()).catch((e) =>
-        console.error('Eroare la salvarea dimensiunii fontului:', e)
+        console.error('Erore la salvarea dimensiunii fontului:', e)
       );
       return newSize;
     });
@@ -179,7 +195,7 @@ export function ConfessionProvider({ children }: { children: React.ReactNode }) 
     setFontSizeState((prev) => {
       const newSize = prev > 14 ? prev - 2 : prev;
       AsyncStorage.setItem(FONT_SIZE_KEY, newSize.toString()).catch((e) =>
-        console.error('Eroare la salvarea dimensiunii fontului:', e)
+        console.error('Erore la salvarea dimensiunii fontului:', e)
       );
       return newSize;
     });
@@ -199,6 +215,7 @@ export function ConfessionProvider({ children }: { children: React.ReactNode }) 
       decreaseFontSize,
       journalEntries,
       addJournalEntry,
+      updateJournalEntry, // <-- Inclus în context
       toggleCanonCompleted,
       deleteJournalEntry,
     }),
@@ -215,6 +232,7 @@ export function ConfessionProvider({ children }: { children: React.ReactNode }) 
       decreaseFontSize,
       journalEntries,
       addJournalEntry,
+      updateJournalEntry,
       toggleCanonCompleted,
       deleteJournalEntry,
     ]

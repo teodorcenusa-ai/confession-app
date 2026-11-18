@@ -31,6 +31,7 @@ import {
   Clock,
   ChevronDown,
   ChevronUp,
+  Edit3, // <-- Am adăugat iconița de editare
 } from 'lucide-react-native';
 import { useConfession } from '../../contexts/ConfessionContext';
 
@@ -49,12 +50,16 @@ export default function JournalScreen() {
     decreaseFontSize,
     journalEntries,
     addJournalEntry,
+    updateJournalEntry, // Asigură-te că ai adăugat această funcție în ConfessionContext (vezi explicația de jos)
     toggleCanonCompleted,
     deleteJournalEntry,
   } = useConfession();
 
   const [showFontSettings, setShowFontSettings] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  
+  // Stare pentru a ști dacă edităm o înregistrare existentă și care este ID-ul ei
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   // Stare pentru cardurile extinse (reține ID-urile cardurilor deschise)
   const [expandedCardIds, setExpandedCardIds] = useState<Record<string, boolean>>({});
@@ -64,7 +69,7 @@ export default function JournalScreen() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [location, setLocation] = useState('');
   const [canon, setCanon] = useState('');
-  const [canonDays, setCanonDays] = useState('40'); // Valoare implicită 40 zile
+  const [canonDays, setCanonDays] = useState('40');
   const [notes, setNotes] = useState('');
 
   // Stări Notificare (Sincronizate cu AsyncStorage)
@@ -90,7 +95,6 @@ export default function JournalScreen() {
     }
   }, [lastEntry?.id]);
 
-  // Funcție de comutare extindere/pliere card
   const toggleCardExpansion = (id: string) => {
     setExpandedCardIds((prev) => ({
       ...prev,
@@ -98,7 +102,7 @@ export default function JournalScreen() {
     }));
   };
 
-  // Încărcarea setărilor de notificare salvate la deschiderea ecranului
+  // Încărcarea setărilor de notificare
   useEffect(() => {
     loadNotificationSettings();
   }, []);
@@ -118,7 +122,7 @@ export default function JournalScreen() {
         }
       }
     } catch (e) {
-      console.error('Eroare la încărcarea setărilor de notificare:', e);
+      console.error('Erore la încărcarea setărilor de notificare:', e);
     }
   };
 
@@ -127,7 +131,7 @@ export default function JournalScreen() {
       await AsyncStorage.setItem('@canon_reminder_enabled', JSON.stringify(enabled));
       await AsyncStorage.setItem('@canon_reminder_time', time);
     } catch (e) {
-      console.error('Eroare la salvarea setărilor de notificare:', e);
+      console.error('Erore la salvarea setărilor de notificare:', e);
     }
   };
 
@@ -219,30 +223,67 @@ export default function JournalScreen() {
     }
   };
 
+  // Funcție pentru deschiderea modalului în mod de Adăugare Nouă
+  const handleOpenAdd = () => {
+    setEditingId(null);
+    setSelectedDate(new Date());
+    setLocation('');
+    setCanon('');
+    setCanonDays('40');
+    setNotes('');
+    setModalVisible(true);
+  };
+
+  // Funcție pentru deschiderea modalului în mod de Editare
+  const handleOpenEdit = (entry: any) => {
+    setEditingId(entry.id);
+    setSelectedDate(entry.rawDate ? new Date(entry.rawDate) : new Date());
+    setLocation(entry.location || '');
+    setCanon(entry.canon || '');
+    setCanonDays(entry.canonDays ? entry.canonDays.toString() : '40');
+    setNotes(entry.notes || '');
+    setModalVisible(true);
+  };
+
   const handleSave = async () => {
     const formattedDate = formatDateString(selectedDate);
     const parsedDays = parseInt(canonDays, 10) || 40;
 
-    await addJournalEntry({
-      date: formattedDate,
-      location,
-      canon,
-      canonDays: parsedDays,
-      rawDate: selectedDate.toISOString(),
-      notes,
-      isCanonCompleted: false,
-    });
+    if (editingId) {
+      // Dacă avem un ID de editare, actualizăm înregistrarea existentă
+      await updateJournalEntry(editingId, {
+        date: formattedDate,
+        location,
+        canon,
+        canonDays: parsedDays,
+        rawDate: selectedDate.toISOString(),
+        notes,
+      });
+    } else {
+      // Altfel, adăugăm o înregistrare nouă
+      await addJournalEntry({
+        date: formattedDate,
+        location,
+        canon,
+        canonDays: parsedDays,
+        rawDate: selectedDate.toISOString(),
+        notes,
+        isCanonCompleted: false,
+      });
 
-    if (reminderEnabled && canon.trim() !== '') {
-      const [h, m] = reminderTime.split(':').map(Number);
-      await scheduleCanonReminder(h || 21, m || 0, canon);
+      if (reminderEnabled && canon.trim() !== '') {
+        const [h, m] = reminderTime.split(':').map(Number);
+        await scheduleCanonReminder(h || 21, m || 0, canon);
+      }
     }
 
+    // Resetăm formularul și închidem modalul
     setLocation('');
     setCanon('');
     setCanonDays('40');
     setNotes('');
     setSelectedDate(new Date());
+    setEditingId(null);
     setModalVisible(false);
   };
 
@@ -275,7 +316,6 @@ export default function JournalScreen() {
     return `Ziua ${diffDays} din ${totalDays}`;
   };
 
-  // Componentă reutilizabilă pentru afișarea unui card de spovedanie
   const renderEntryCard = (entry: any, isMainCard: boolean = false) => {
     const isExpanded = !!expandedCardIds[entry.id];
 
@@ -287,7 +327,6 @@ export default function JournalScreen() {
           isMainCard && styles.summaryCard,
         ]}
       >
-        {/* Antetul Cardului (Apasă oriunde pe el pentru extindere) */}
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => toggleCardExpansion(entry.id)}
@@ -312,6 +351,15 @@ export default function JournalScreen() {
           </View>
 
           <View style={styles.cardHeaderRight}>
+            {/* Buton Editare */}
+            <TouchableOpacity
+              onPress={() => handleOpenEdit(entry)}
+              style={styles.actionBtn}
+            >
+              <Edit3 size={18} color="#8B4513" />
+            </TouchableOpacity>
+
+            {/* Buton Ștergere */}
             <TouchableOpacity
               onPress={() => confirmDelete(entry.id)}
               style={styles.actionBtn}
@@ -329,7 +377,6 @@ export default function JournalScreen() {
           </View>
         </TouchableOpacity>
 
-        {/* Conținutul Extins (Vizibil doar dacă isExpanded === true) */}
         {isExpanded && (
           <View style={styles.expandedContent}>
             {entry.canon ? (
@@ -393,7 +440,6 @@ export default function JournalScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Bara de reglare font */}
       {showFontSettings && (
         <View style={styles.fontBar}>
           <Text style={styles.fontLabel}>Dimensiune text:</Text>
@@ -416,7 +462,6 @@ export default function JournalScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {/* CARD SUS: Ultima Spovedanie */}
         <Text style={[styles.sectionTitle, { fontSize: fontSize + 2 }]}>Ultima Spovedanie</Text>
         {lastEntry ? (
           renderEntryCard(lastEntry, true)
@@ -428,7 +473,6 @@ export default function JournalScreen() {
           </View>
         )}
 
-        {/* CĂSUȚĂ PERMANENTĂ: Setări Notificare Canon */}
         <View style={styles.globalReminderCard}>
           <View style={styles.reminderHeader}>
             <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
@@ -492,7 +536,6 @@ export default function JournalScreen() {
           )}
         </View>
 
-        {/* SECȚIUNEA JOS: Istoric Spovedanii Anterioare */}
         <Text style={[styles.sectionTitle, { fontSize: fontSize + 2 }]}>Istoric Spovedanii</Text>
 
         {previousEntries.length > 0 ? (
@@ -509,17 +552,19 @@ export default function JournalScreen() {
       {/* Buton Adăugare (FAB) */}
       <TouchableOpacity
         style={[styles.fab, { bottom: insets.bottom + 20 }]}
-        onPress={() => setModalVisible(true)}
+        onPress={handleOpenAdd}
       >
         <Plus size={28} color="white" />
       </TouchableOpacity>
 
-      {/* Modal Adăugare Spovedanie */}
+      {/* Modal Adăugare / Editare Spovedanie */}
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Adaugă Spovedanie</Text>
+              <Text style={styles.modalTitle}>
+                {editingId ? 'Editează Spovedania' : 'Adaugă Spovedanie'}
+              </Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <X size={24} color="#5D2E0A" />
               </TouchableOpacity>
@@ -601,7 +646,9 @@ export default function JournalScreen() {
               />
 
               <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-                <Text style={styles.saveBtnText}>Salvează în Jurnal</Text>
+                <Text style={styles.saveBtnText}>
+                  {editingId ? 'Salvează Modificările' : 'Salvează în Jurnal'}
+                </Text>
               </TouchableOpacity>
             </ScrollView>
           </View>
@@ -662,8 +709,8 @@ const styles = StyleSheet.create({
   cardHeaderLeft: { flex: 1 },
   cardHeaderRight: { flexDirection: 'row', alignItems: 'center' },
 
-  actionBtn: { padding: 6, marginRight: 4 },
-  chevronIcon: { padding: 2 },
+  actionBtn: { padding: 6, marginRight: 2 },
+  chevronIcon: { padding: 2, marginLeft: 4 },
 
   cardDate: { fontFamily: 'Playfair-Bold', fontWeight: 'bold', color: '#5D2E0A', marginLeft: 8 },
   cardSubText: { fontFamily: 'Lora', color: '#666', marginLeft: 8, marginTop: 2 },
