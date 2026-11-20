@@ -2,7 +2,7 @@
   "expo": {
     "name": "Taina Spovedaniei",
     "slug": "confession-app",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "scheme": "taina-spovedaniei",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -13,7 +13,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "ro.teodor.taina.spovedanie",
-      "buildNumber": "3",
+      "buildNumber": "4",
       "entitlements": {
         "aps-environment": "production"
       },
@@ -27,7 +27,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "ro.teodor.taina.spovedanie",
-      "versionCode": 21
+      "versionCode": 22
     },
     "extra": {
       "eas": {
@@ -42,17 +42,6 @@
         {
           "icon": "./assets/images/icon.png",
           "color": "#ffffff"
-        }
-      ],
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "ndkVersion": "27.1.12297006",
-            "packagingOptions": {
-              "useLegacyPackaging": false
-            }
-          }
         }
       ],
       "expo-sharing",
